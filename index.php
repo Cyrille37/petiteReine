@@ -6,10 +6,9 @@ require 'conf.php';
 <title><?php echo $LABELS["pageTitle"];?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="//cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 
 <link href='css/style.css' rel='stylesheet' type='text/css'>
 
