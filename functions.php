@@ -2,6 +2,7 @@
 
 function getLocale($LOCALES)
 {
+	if( isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) )
 	foreach(explode(",",$_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang)
 	{
 		foreach($LOCALES as $supportedLangs => $localeID)
