@@ -53,7 +53,7 @@ CREATE TABLE pv_parking_dist_zones
 -- Log table for the import batch
 CREATE TABLE pv_import_trace
 (
-  trace_id integer NOT NULL DEFAULT nextval('pv_import_trace_trace_id_seq'::regclass),
+  trace_id integer NOT NULL,
   status boolean,
   startdt timestamp with time zone,
   duration numeric,
