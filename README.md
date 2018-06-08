@@ -9,4 +9,4 @@ Features :
 * Highlighting missing or incorrect data
 * Localisation support (English and French are available)
 
-You can read the installation instructions on the wiki
+You can read the installation instructions on the wiki: https://github.com/edewaele/petiteReine/wiki
