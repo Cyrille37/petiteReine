@@ -245,7 +245,7 @@ if($result)
 	// STEP 3 : EXPORT THE PARKINGS INTO A GEOJSON FILE
 	$sqlParkings = "SELECT obj_id as osm_id,capacity,covered,parking_type as bicycle_parking,access,operator,zone_id,ST_AsGeoJSON(public.ST_Transform((the_geom),4326)) AS geojson FROM pv_parkings";
 	$queryParkings = $PDO->query($sqlParkings);
-	$jsonFile = new GeoJSON("export/parkings.json");
+	$jsonFile = new GeoJSON( __DIR__.'/export/parkings.json' );
 	while($rs = $queryParkings->fetch())
 	{
 		$properties = $rs;
