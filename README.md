@@ -10,3 +10,7 @@ Features :
 * Localisation support (English and French are available)
 
 You can read the installation instructions on the wiki: https://github.com/edewaele/petiteReine/wiki
+
+Project versions:
+* Current: https://github.com/Cyrille37/petiteReine
+* Original: https://github.com/edewaele/petiteReine (no more activity).
