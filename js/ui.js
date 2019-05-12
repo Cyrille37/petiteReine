@@ -17,10 +17,10 @@ function mapInit(){
 	'Thunderforest OpenCycleMap': L.tileLayer.provider('Thunderforest.OpenCycleMap'),
 	'Thunderforest Transport': L.tileLayer.provider('Thunderforest.Transport'),
 	'Thunderforest Landscape': L.tileLayer.provider('Thunderforest.Landscape'),
-	'Hydda Full': L.tileLayer.provider('Hydda.Full').addTo(map),
-	'MapQuest OSM': L.tileLayer.provider('MapQuestOpen.OSM')
+	'Hydda Full': L.tileLayer.provider('Hydda.Full').addTo(map)
+	//'MapQuest OSM': L.tileLayer.provider('MapQuestOpen.OSM')
 	};
-	
+
 	parkingsLayer = L.markerClusterGroup({
 			maxClusterRadius: CLIENT_CONF.maxClusterRadius,
 			disableClusteringAtZoom :CLIENT_CONF.disableClusteringAtZoom,
@@ -35,11 +35,11 @@ function mapInit(){
 				if(n > 100)clusterClass = 'marker-cluster-medium';
 				if(n > 500)clusterClass = 'marker-cluster-large';
 				var htmlCode = "<div><span>"+n+"</div></span>";
-				
+
 				return L.divIcon({ html: htmlCode, className: clusterClass+' marker-cluster', iconSize: L.point(40, 40) });
-			}	
+			}
 			}).addTo(map);
-	
+
 	var parkingLoad = function(data)
 		{
 			var geojson = L.geoJson(data, {
@@ -54,11 +54,11 @@ function mapInit(){
 					layer.bindPopup(feature.properties.popup,{closeButton:false,offset:[0,-20]});
 				}
 			});
-			
+
 			parkingsLayer.addLayer(geojson);
-			
+
 			map.fitBounds(parkingsLayer.getBounds());
-			
+
 			parkingsLayer.layerLoaderLoaded =  true;
 	};
 	layerLoader.addLayer(parkingsLayer,'list',parkingLoad);
@@ -69,13 +69,13 @@ function mapInit(){
 				data:{get:'list'},
 				success:parkingLoad
 	});
-	popupManager.addLayer(parkingsLayer);	
-	
+	popupManager.addLayer(parkingsLayer);
+
 	// this layers display the private parking
 	privateLayer = L.featureGroup().addTo(map);
-	popupManager.addLayer(privateLayer);		
+	popupManager.addLayer(privateLayer);
 	map.removeLayer(privateLayer);
-	
+
 	// this layer will be loaded on demand
 	layerLoader.addLayer(privateLayer,'private',function(data){
 		var geojson = L.geoJson(data, {
@@ -95,13 +95,13 @@ function mapInit(){
 			disableClusteringAtZoom :15,
 			iconCreateFunction: function (cluster) {
 				var markers = cluster.getAllChildMarkers();
-				var htmlCode = "<div><span>"+markers.length+"</div></span>";// The circle display the number of parkings that lack information				
+				var htmlCode = "<div><span>"+markers.length+"</div></span>";// The circle display the number of parkings that lack information
 				return L.divIcon({ html: htmlCode, className: 'marker-cluster-bad marker-cluster', iconSize: L.point(40, 40) });
-			}	
+			}
 			}).addTo(map);
-	popupManager.addLayer(badObjLayer);		
+	popupManager.addLayer(badObjLayer);
 	map.removeLayer(badObjLayer);
-	
+
 	// this layer will be loaded on demand
 	layerLoader.addLayer(badObjLayer,'badObj',function(data){
 		var geojson = L.geoJson(data, {
@@ -114,7 +114,7 @@ function mapInit(){
 		});
 		badObjLayer.addLayer(geojson);
 	});
-	
+
 	// Pseudo-isochrone layer
 	surroundingAreaLayer = L.featureGroup();//.addTo(map);
 	map.removeLayer(surroundingAreaLayer);
@@ -130,7 +130,7 @@ function mapInit(){
 		surroundingAreaLayer.addLayer(geojson);
 		map.addLayer(surroundingAreaLayer);
 	});
-	
+
 	// This layer displays the local boundaries, as defined in pv_zones table
 	if(CLIENT_CONF.zoneFilter)
 	{
@@ -147,7 +147,7 @@ function mapInit(){
 			map.addLayer(boundariesLayer);
 		});
 	}
-	
+
 	// Control layer
 	var overlays = {};
 	overlays[CLIENT_CONF.labels.parkingsLayer] = parkingsLayer;
@@ -158,13 +158,13 @@ function mapInit(){
 	{
 		overlays[CLIENT_CONF.labels.boundariesLayer] = boundariesLayer;
 	}
-	
+
 	L.control.zoom({position:'topright'}).addTo(map);
 	L.control.layers(baseLayers, overlays).addTo(map);
 	L.control.scale({imperial:false,maxWidth:200}).addTo(map);
-	
 
-	
+
+
 	// The draw allow the user to draw rectangles and polygons
 	var drawnItems = new L.FeatureGroup();
 		map.addLayer(drawnItems);
@@ -178,7 +178,7 @@ function mapInit(){
 			edit: false
 		});
 		map.addControl(drawControl);
-	
+
 	var LeafIcon = L.Icon.extend({
 			options: {
 				iconSize:     [20, 20],
@@ -187,16 +187,16 @@ function mapInit(){
 		});
 	badParkingIco = new LeafIcon({iconUrl:'img/parking_bicycle_red.png'});
 	privateParkingIco = new LeafIcon({iconUrl:'img/parking_private.png'});
-	
+
 	// When the user finishes drawing a shape
 	map.on('draw:created', function (e) {
 			isDrawing = false;
-		
+
 			var type = e.layerType,
 				layer = e.layer;
 			drawnItems.clearLayers();// remove the previously drawn shapes
 			drawnItems.addLayer(layer);// the new one is displayed
-			
+
 			// the server is queried to display the stats per zone
 			var geometryRect = layer.toGeoJSON()
 			geometryRect.geometry.crs = {"type":"name","properties":{"name":"EPSG:4326"}};
@@ -215,16 +215,16 @@ function mapInit(){
 	L.icon = function (options) {
     return new L.Icon(options);
 	};
-	
+
 	map.on('click', onMapClick);
-	
+
 	// the layerLoader manages vector layer loading
 	map.on('overlayadd', function(e){
 		layerLoader.loadLayer(e.layer);
 	});
-	
-	
-	
+
+
+
 	// Push button initialisation
 	// When the button is clicked, I simulate a click on the rectangle draw tool in Leaflet.draw
 	$("#drawRect").click(function(){
@@ -234,7 +234,7 @@ function mapInit(){
 			this.click();
 		});
 	});
-	
+
 	// When the button is clicked, I simulate a click on the polygon draw tool in Leaflet.draw
 	$("#drawPolygon").click(function(){
 		$("#eraseZone").click();
@@ -243,12 +243,12 @@ function mapInit(){
 			this.click();
 		});
 	});
-	
+
 	$("#eraseZone").click(function(){
 		$("#stats_zone").html("");
 		drawnItems.clearLayers();
 	});
-	
+
 	// jQuery UI declarations
 	//$("#leftPanel").accordion({ fillSpace: true });
 	$("#leftPanel").accordion({heightStyle: "content",
@@ -264,7 +264,7 @@ function mapInit(){
 		modal:true,
 		minWidth:500
 	});
-	
+
 	// resize
 	$(".ui-accordion-content").css("max-height",($(document).height()-CLIENT_CONF.reservedHeight)+"px");
 	map.on('resize', function(event){
@@ -273,12 +273,12 @@ function mapInit(){
 		else
 			$(".ui-accordion-content").css("max-height",(event.newSize.y-CLIENT_CONF.reservedHeight)+"px");
 	});
-	
+
 	// Checkbox "Include private parkings", the visibility of stats is changed every time the checkbox is clicked
 	$("#showPrivate").change(function(){
 		layerLoader.setStatVisibility();
 	});
-	
+
 	if(CLIENT_CONF.zoneFilter)
 	{
 		$.ajax({
@@ -293,7 +293,7 @@ function mapInit(){
 				}
 			}
 		});
-		
+
 		$("#zonesApply").click(function(){
 			layerLoader.reloadAll();
 			$("#stats_zone").html("");
@@ -311,7 +311,7 @@ function mapInit(){
 			});
 		});*/
 	}
-	
+
 	layerLoader.updateZones();
 }
 
@@ -419,7 +419,7 @@ var layerLoader = {
 	},
 	setStatVisibility: function()
 	{
-		// the visibility of stats is changed according to the checkbox "Include private parkings", 
+		// the visibility of stats is changed according to the checkbox "Include private parkings",
 		if($("#showPrivate").is(':checked'))
 		{
 			$(".noPrivate").hide();
