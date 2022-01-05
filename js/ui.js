@@ -13,11 +13,11 @@ function mapInit(){
 	var baseLayers = {
 	'OpenStreetMap Default': L.tileLayer.provider('OpenStreetMap.Mapnik'),
 	'OpenStreetMap France': L.tileLayer.provider('OpenStreetMap.France'),
-	'OpenStreetMap H.O.T.': L.tileLayer.provider('OpenStreetMap.HOT'),
+	'OpenStreetMap H.O.T.': L.tileLayer.provider('OpenStreetMap.HOT').addTo(map),
 	'Thunderforest OpenCycleMap': L.tileLayer.provider('Thunderforest.OpenCycleMap'),
 	'Thunderforest Transport': L.tileLayer.provider('Thunderforest.Transport'),
 	'Thunderforest Landscape': L.tileLayer.provider('Thunderforest.Landscape'),
-	'Hydda Full': L.tileLayer.provider('Hydda.Full').addTo(map)
+	// unavailable #5 'Hydda Full': L.tileLayer.provider('Hydda.Full').addTo(map)
 	//'MapQuest OSM': L.tileLayer.provider('MapQuestOpen.OSM')
 	};
 
