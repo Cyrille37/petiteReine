@@ -1,5 +1,7 @@
 PetiteReine (french for bicycle) is a visualisation, data analysis and quality assurance tool for bicycle parkings, using OpenStreetMap data.
 
+Demo online at https://petitereine.openstreetmap.fr/. Thanks to the OpenStreetMap France association for providing the technical facilities.
+
 Features : 
 * Data import with Overpass API
 * Easy configuration for a small area (city, county)
