@@ -74,7 +74,7 @@ if($result)
 	/**
 		STEP 1 : IMPORT PARKINS FROM OVERPASS API
 	*/
-	echo $PDO->beginTransaction();	
+	$PDO->beginTransaction();	
 	$PDO->exec("DELETE FROM pv_parkings");	
 
 	$dom = new DomDocument();
