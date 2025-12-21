@@ -197,7 +197,7 @@ foreach ($relations as $relation) {
     try {
       // pv_zones (zone_id, label, osm_id, active, visible_default, geom) FROM stdin;
 
-      $stmt = $PDO->prepare("INSERT INTO pv_zones (zone_id, label, osm_id, active, visible_default, geom) VALUES (:zone_id,:label,:osm_id,:active, :visible_default, ST_GeomFromText(:geom, 4326))");
+      $stmt = $PDO->prepare("INSERT INTO pv_zones (zone_id, label, osm_id, active, visible_default, geom) VALUES (:zone_id,:label,:osm_id,:active, :visible_default, ST_Multi(ST_GeomFromText(:geom, 4326)))");
 
       $stmt->execute([
         'zone_id' => $zone_id,
