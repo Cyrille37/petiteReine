@@ -16,3 +16,27 @@ You can read the installation instructions on the wiki: https://github.com/edewa
 Project versions:
 * Current: https://github.com/Cyrille37/petiteReine
 * Original: https://github.com/edewaele/petiteReine (no more activity).
+
+## Install
+
+Tested with Php7 and Postgres 9 (Postgis ?).
+
+### Requirements
+
+Php import:
+- php-pgsql
+- php-dom
+
+### Import
+
+In conf.php set OSM_ZONE with a relation Id to import all ways and nodes with `amenity=bicycle_parking` inside the relation.
+
+When conf has `MODE_ZONE_FILTER=true` :
+- php import/import_zones.php
+  - create zones for `[admin_level=8][boundary=administrative]`
+  - GUI will have a "Communes" control
+- php import/import.php
+
+When `MODE_ZONE_FILTER=false`:
+- php import/import.php
+

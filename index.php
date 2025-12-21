@@ -4,11 +4,11 @@ require 'conf.php';
 <html>
 <head>
 <title><?php echo $LABELS["pageTitle"];?></title>
+<!-- meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
-<script src="lib/leaflet/leaflet.js"></script>
-<script src="lib/jquery/jquery.min.js"></script>
 
 <link href='css/style.css' rel='stylesheet' type='text/css'>
 
@@ -17,6 +17,8 @@ if( $detect->isMobile()){?>
 <link href='css/mobile.css' rel='stylesheet' type='text/css'>
 <?php }?>
 
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="lib/jquery/jquery.min.js"></script>
 <link rel="stylesheet" href="lib/leaflet/MarkerCluster.css" />
 <link rel="stylesheet" href="lib/leaflet/MarkerCluster.Default.css" />
 <script src="lib/leaflet/leaflet.markercluster.js"></script>
@@ -27,18 +29,14 @@ if( $detect->isMobile()){?>
 <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css" />
 <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.structure.min.css" />
 <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.theme.min.css" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <script>
 // The client-side configuration is defined in conf.php
 // Its contents are printed below
-
 var CLIENT_CONF = <?php echo json_encode($CLIENT_CONF, JSON_NUMERIC_CHECK);?>;
-
-
 </script>
+<script src="lib/ui.js"></script>
 
-
-<script src="js/ui.js"></script>
 </head>
 <body>
 <div id="map"></div>
@@ -66,6 +64,7 @@ var CLIENT_CONF = <?php echo json_encode($CLIENT_CONF, JSON_NUMERIC_CHECK);?>;
 		<input type="button" id="zonesNone" value="Rien" />-->
 		<input type="button" id="zonesApply" value="Appliquer" />
 		<div id="zoneList"></div>
+		<button type="button" onclick="zoneListToggleAll(true);">Toutes</button><button type="button" onclick="zoneListToggleAll(false);">Aucune</button>
 	</div>
 	<?php }?>
 	<h3><?php echo $LABELS["panel.help"];?></h3>

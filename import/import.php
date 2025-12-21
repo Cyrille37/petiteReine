@@ -1,5 +1,5 @@
 <?php
-require 'conf.php';
+require __DIR__.'/../conf.php';
 /**
 	PARKINGS IMPORT BATCH
 	
@@ -55,8 +55,17 @@ array(
 'content' => $postdata
 )
 );
+
+if( file_exists('debug.tmp'))
+{
+	$result = file_get_contents('debug.tmp');
+}
+else
+{
 $context = stream_context_create($opts);
 $result = file_get_contents(OAPI_URL, false, $context);
+file_put_contents('debug.tmp',$result);
+}
 
 
 if($result)
@@ -82,7 +91,15 @@ if($result)
 		
 		$pointCoord[$place->getAttribute('id')] = array('x'=> $place->getAttribute('lon'),'y'=> $place->getAttribute('lat'));
 		
-		$parkingAttr = array('obj_id'=>'n'.$place->getAttribute('id'),'capacity'=>0,'covered'=>'','bicycle_parking'=>'','timestamp'=>$place->getAttribute('timestamp'),'access'=>'','operator'=>'');
+		$parkingAttr = array(
+			'obj_id'=>'n'.$place->getAttribute('id'),
+			'timestamp'=>$place->getAttribute('timestamp'),
+			'capacity'=>0,
+			'covered'=>'',
+			'bicycle_parking'=>'',
+			'access'=>'',
+			'operator'=>''
+		);
 		
 		// retrieving the attributes of the object
 		$tagList = $place->getElementsByTagName('tag');
@@ -189,7 +206,7 @@ if($result)
 		{
 			// The zone_id of each parking(table pv_parkings) is calculated, according to the geometries in pv_zones
 			$PDO->exec("update pv_parkings set zone_id = rel.zone_id
-			from (select Z.zone_id,obj_id from pv_zones Z,pv_parkings where st_contains(geom,the_geom)) as rel
+			from (select Z.zone_id,obj_id from pv_zones Z,pv_parkings where Z.zone_id!='default' and st_contains(geom,the_geom)) as rel
 			where pv_parkings.obj_id = rel.obj_id");
 		}
 		
@@ -232,7 +249,8 @@ if($result)
 				sr where st_geometrytype(the_geom) = 'ST_MultiPolygon'";
 		
 			$queryDistZones = $PDO->prepare($sqlDistZones);
-			$queryDistZones->bindValue(':proj', (int)DIST_PROJ);
+			// TODO: it works with php7.4 but failed with php8.3 😩. Should be a pgsql client driver ... https://externals.io/message/113521
+			$queryDistZones->bindValue(':proj', (int)DIST_PROJ, PDO::PARAM_INT);
 			$queryDistZones->bindValue(':dist', $distElt['dist']);
 			$queryDistZones->bindValue(':dist2', $distElt['dist']);
 			$queryDistZones->execute();
@@ -245,7 +263,7 @@ if($result)
 	// STEP 3 : EXPORT THE PARKINGS INTO A GEOJSON FILE
 	$sqlParkings = "SELECT obj_id as osm_id,capacity,covered,parking_type as bicycle_parking,access,operator,zone_id,ST_AsGeoJSON(public.ST_Transform((the_geom),4326)) AS geojson FROM pv_parkings";
 	$queryParkings = $PDO->query($sqlParkings);
-	$jsonFile = new GeoJSON( __DIR__.'/export/parkings.json' );
+	$jsonFile = new GeoJSON( __DIR__.'/../export/parkings.json' );
 	while($rs = $queryParkings->fetch())
 	{
 		$properties = $rs;
@@ -309,6 +327,3 @@ if($result)
 	$queryInsertTrace = $PDO->prepare($sqlInsertTrace);
 	$queryInsertTrace->execute($traceAttr);
 }
-
-
-?>

@@ -1,8 +1,6 @@
 <?php
-require_once 'lib/mobileDetect/Mobile_Detect.php';
-require_once 'functions.php';
-
-
+require_once __DIR__.'/lib/mobileDetect/Mobile_Detect.php';
+require_once __DIR__.'/lib/functions.php';
 
 // In this file, we are going to configure the app step by step
 
@@ -41,7 +39,7 @@ define('BBOX_EAST',0.483398);
  For instance, in the area near Tours, France the projection is Lambert CC47 (EPSG 27572)
  (see https://en.wikipedia.org/wiki/Lambert_conformal_conic_projection)
  */
-define('DIST_PROJ',27572);
+define('DIST_PROJ',27572); // NTF (Nouvelle Triangulation de la France) / France II
 
 /*
 	STEP 3 : LOCALE SETTINGS
