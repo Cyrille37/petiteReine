@@ -64,7 +64,8 @@ var CLIENT_CONF = <?php echo json_encode($CLIENT_CONF, JSON_NUMERIC_CHECK);?>;
 		<input type="button" id="zonesNone" value="Rien" />-->
 		<input type="button" id="zonesApply" value="Appliquer" />
 		<div id="zoneList"></div>
-		<button type="button" onclick="zoneListToggleAll(true);">Toutes</button><button type="button" onclick="zoneListToggleAll(false);">Aucune</button>
+		<button type="button" onclick="zoneListToggleAll(true);">Toutes</button>
+		<button type="button" onclick="zoneListToggleAll(false);">Aucune</button>
 	</div>
 	<?php }?>
 	<h3><?php echo $LABELS["panel.help"];?></h3>
