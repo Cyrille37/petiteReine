@@ -29,14 +29,8 @@ $opts = array(
   )
 );
 
-$DEBUG_FILE = 'debug-zones.tmp';
-if (file_exists($DEBUG_FILE)) {
-  $result = file_get_contents($DEBUG_FILE);
-} else {
-  $context = stream_context_create($opts);
-  $result = file_get_contents(OAPI_URL, false, $context);
-  file_put_contents($DEBUG_FILE, $result);
-}
+$context = stream_context_create($opts);
+$result = file_get_contents(OAPI_URL, false, $context);
 
 if (! $result)
   throw new InvalidArgumentException('Overpass query no result');

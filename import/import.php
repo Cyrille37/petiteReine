@@ -56,17 +56,8 @@ array(
 )
 );
 
-if( file_exists('debug.tmp'))
-{
-	$result = file_get_contents('debug.tmp');
-}
-else
-{
 $context = stream_context_create($opts);
 $result = file_get_contents(OAPI_URL, false, $context);
-file_put_contents('debug.tmp',$result);
-}
-
 
 if($result)
 	{
