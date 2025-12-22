@@ -11,7 +11,13 @@ Features :
 * Highlighting missing or incorrect data
 * Localisation support (English and French are available)
 
-You can read the installation instructions on the wiki: https://github.com/edewaele/petiteReine/wiki
+## Documentation
+
+For detailed installation and usage instructions, please refer to:
+- [INSTALLATION.md](INSTALLATION.md) - Complete setup guide
+- [USAGE.md](USAGE.md) - Usage instructions and configuration
+
+Additional information is available on the wiki: https://github.com/edewaele/petiteReine/wiki
 
 Project versions:
 * Current: https://github.com/Cyrille37/petiteReine
