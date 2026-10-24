@@ -3,19 +3,18 @@ PetiteReine (french for bicycle) is a visualisation, data analysis and quality a
 Demo online at https://petitereine.openstreetmap.fr/. Thanks to the OpenStreetMap France association for providing the technical facilities.
 
 Features : 
-* Data import with Overpass API
+* Data import from OpenStreetMap (local GeoDesk `.gol` file, no Overpass call)
 * Easy configuration for a small area (city, county)
 * Displaying parkings with several useful attributes (type, capacity, covered or not, access rules)
-* Statictics based on user - drawn areas
+* Statistics based on user - drawn areas
 * Filtering by administrative entities
 * Highlighting missing or incorrect data
 * Localisation support (English and French are available)
 
 ## Documentation
 
-For detailed installation and usage instructions, please refer to:
+For detailed setup instructions, please refer to:
 - [INSTALLATION.md](INSTALLATION.md) - Complete setup guide
-- [USAGE.md](USAGE.md) - Usage instructions and configuration
 
 Additional information is available on the wiki: https://github.com/edewaele/petiteReine/wiki
 
@@ -25,7 +24,7 @@ Project versions:
 
 ## Install
 
-Tested with Php7 and Postgres 9 (Postgis ?).
+Tested with PHP 8.3 (`pdo_pgsql`) and PostgreSQL with PostGIS.
 
 ### Requirements
 
@@ -49,6 +48,16 @@ The Python import reads everything locally from `data/france.gol` via [GeoDesk](
 
 Both scripts accept a `--dry-run` flag to query the `.gol` file without touching the database.
 
+**The `.gol` file** is a local snapshot of OpenStreetMap. Build it once from an OSM PBF (a few GB):
+
+```
+gol build france data/france-latest.osm.pbf   # produces data/france.gol
+```
+
+Rebuilding it (e.g. with a newer PBF) is how you refresh the imported data.
+
+**Both scripts are idempotent**: each run replaces the whole table contents (`DELETE` + re-`INSERT` in a single transaction), so re-running them (e.g. from a cron job) is safe and always converges to the latest `.gol` data.
+
 Legacy Overpass imports, kept for reference: `php import/import.php` (parkings, area from `OSM_ZONE` or bbox in `conf.php`) and `php import/import_zones.php` (single zone).
 
 ### Configuring the Python import
@@ -63,7 +72,26 @@ Copy `conf.ini.example` to `conf.ini` (it is gitignored) and fill in:
 ### Docker
 
 ```
-docker compse up -d
+docker compose up -d
 
 docker exec -i petitereine-sql-1 psql -U postgres -d petitereine < res/DB.sql
 ```
+
+## Usage
+
+The web interface (open `index.php` in a browser) shows the imported parkings on a map. Layers are toggled from the layer control (top-right):
+
+* **Parkings** — all parkings, with attributes (type, capacity, covered, access) in the popups
+* **Surrounding areas** — the isochrone areas from `pv_parking_dist_zones` (coloured by distance threshold)
+* **Missing or incorrect data** — parkings without a capacity, without a type, or duplicated; an "Edit with JOSM" link is included when `EDIT_JOSM` is enabled
+* **Private access** — parkings whose `access` is not public
+* **Zone boundaries** — only shown when the zone filter is enabled (below)
+
+A few other things to know:
+
+* **Zone filter** — with `MODE_ZONE_FILTER` enabled in `conf.php` and `pv_zones` populated, a "Communes" selector lets you restrict the display and statistics to a given zone.
+* **Statistics on a drawn area** — use the draw control (top-left) to draw a polygon or rectangle; the statistics panel is then computed only for the parkings inside that area.
+* **GeoJSON export** — the "About" dialog links to the exported data (`export/parkings.json`).
+* **Mobile** — the layout adapts to mobile devices.
+
+The map behaviour (viewport, clustering, popups, reserved heights) is configured through `$CLIENT_CONF` in `conf.php`; see [INSTALLATION.md](INSTALLATION.md) for the full list.

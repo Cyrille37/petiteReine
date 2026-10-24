@@ -1,8 +1,12 @@
-<?php
-require 'conf.php';
-?>
+<!doctype html>
 <html>
+<?php
+require '../conf.php';
+global $CLIENT_CONF ;
+global $LABELS ;
+?>
 <head>
+<meta charset="UTF-8" />
 <title><?php echo $LABELS["pageTitle"];?></title>
 <!-- meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,24 +15,23 @@ require 'conf.php';
 <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
 
 <link href='css/style.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="lib/leaflet/MarkerCluster.css" />
+<link rel="stylesheet" href="lib/leaflet/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="lib/leaflet/leaflet.draw.css" />
+<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css" />
+<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.structure.min.css" />
+<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.theme.min.css" />
 
-<?php
-if( $detect->isMobile()){?>
-<link href='css/mobile.css' rel='stylesheet' type='text/css'>
+<?php if( $detect->isMobile()){?>
+	<link href='css/mobile.css' rel='stylesheet' type='text/css'>
 <?php }?>
 
 <script src="lib/leaflet/leaflet.js"></script>
 <script src="lib/jquery/jquery.min.js"></script>
-<link rel="stylesheet" href="lib/leaflet/MarkerCluster.css" />
-<link rel="stylesheet" href="lib/leaflet/MarkerCluster.Default.css" />
 <script src="lib/leaflet/leaflet.markercluster.js"></script>
 <script src="lib/leaflet/leaflet-providers.js"></script>
 <script src="lib/leaflet/leaflet.draw.js"></script>
-<link rel="stylesheet" href="lib/leaflet/leaflet.draw.css" />
 <script src="lib/jquery-ui/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css" />
-<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.structure.min.css" />
-<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.theme.min.css" />
 
 <script>
 // The client-side configuration is defined in conf.php

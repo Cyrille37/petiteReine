@@ -40,7 +40,8 @@ CREATE TABLE pv_parkings
 
 
 
--- Given the zones, parkings and $DISTANCE_LEVELS (in conf.php), each geometry (geom) is a the area within a zone (zone), which a distance to the closest parking is inferior to a given threshold (distance column)
+-- Given the zones, parkings and $DISTANCE_LEVELS (in conf.php), each geometry (geom) is a the area within a zone (zone),
+-- which a distance to the closest parking is inferior to a given threshold (distance column)
 -- This table is filled by the import script
 CREATE TABLE pv_parking_dist_zones
 (
