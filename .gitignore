@@ -2,6 +2,7 @@
 conf.php
 conf.ini
 /debug*
+/_doc/
 
 # Python / uv
 .venv/
