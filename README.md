@@ -56,6 +56,16 @@ Both scripts also accept a `--dry-run` flag to query the `.gol` file without tou
 
 **Both scripts are idempotent**: each run replaces the whole table contents (`DELETE` + re-`INSERT` in a single transaction), so re-running them (e.g. from a cron job) is safe and always converges to the latest `.gol` data.
 
+**The `.gol` file** is a local snapshot of OpenStreetMap. Build it once from an OSM PBF (a few GB):
+
+```
+gol build france data/france-latest.osm.pbf   # produces data/france.gol
+```
+
+Rebuilding it (e.g. with a newer PBF) is how you refresh the imported data.
+
+**Both scripts are idempotent**: each run replaces the whole table contents (`DELETE` + re-`INSERT` in a single transaction), so re-running them (e.g. from a cron job) is safe and always converges to the latest `.gol` data.
+
 Legacy Overpass imports, kept for reference: `php import/import.php` (parkings, area from `OSM_ZONE` or bbox in `conf.php`) and `php import/import_zones.php` (single zone).
 
 ### Configuring the Python import
