@@ -1,4 +1,6 @@
-@CHARSET "UTF-8";
+@charset "UTF-8";
+
+html, body{ height:100%; }
 
 body{
 	font-size:12px;
