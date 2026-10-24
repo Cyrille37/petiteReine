@@ -11,7 +11,8 @@ password = secret
 
 [data]
 # Path to the GeoDesk .gol file, relative to this file (or absolute).
-gol = data/france.gol
+# Built by import/update.sh from the Indre-et-Loire PBF extract.
+gol = import/indre_et_loire-latest.gol
 
 [zones]
 # Commune codes (ref:INSEE) to import as pv_zones.

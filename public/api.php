@@ -1,6 +1,7 @@
 <?php 
 require '../conf.php';
 
+global $PARKING_LABEL;
 
 try {
 	$PDO = new PDO( 'pgsql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD );
@@ -48,23 +49,24 @@ function calculateStats($PDO,$LABELS,$filterClause,$geom = "")
 	$numberParkingsTotal = 0;
 	$capacityParkingsTotal = 0;
 		
-	if($geom != "")
+	$geomJson = (is_array($geom) && isset($geom["geometry"])) ? json_encode($geom["geometry"]) : null;
+	if($geomJson !== null)
 	{
 		// if a geometry is provided, the area within the polygon
 		// the ::int cast is required: PDO pgsql sends parameters as text and
 		// ST_Transform would otherwise resolve to the PROJ-string overload
 		$sqlArea = "select st_area(st_transform(st_geomfromgeojson(:geojson),:proj::int)) as area";
 		$queryArea = $PDO->prepare($sqlArea);
-		$queryArea->execute(array(":proj"=>DIST_PROJ,":geojson"=>json_encode($_REQUEST["geom"]["geometry"])));
+		$queryArea->execute(array(":proj"=>DIST_PROJ,":geojson"=>$geomJson));
 		if($rs = $queryArea->fetch())
 		{
 			$areaInSqrKm = $rs["area"] / 1000 / 1000;
 			$stats .= sprintf($LABELS['stats.area'],number_format($areaInSqrKm,2,DEC_POINT,THOUSAND_SEP));
 		}
 	
-		$sqlStats = "select parking_type,count(*) as n,sum(capacity) as c from pv_parkings where st_contains(st_geomfromgeojson(:geojson),the_geom) ".$filterClause.getZoneFilter($_REQUEST["zones"])." group by parking_type";
+		$sqlStats = "select parking_type,count(*) as n,sum(capacity) as c from pv_parkings where st_contains(st_geomfromgeojson(:geojson),the_geom) ".$filterClause.getZoneFilter(isset($_REQUEST["zones"])?$_REQUEST["zones"]:"") . " group by parking_type";
 		$queryStats = $PDO->prepare($sqlStats);
-		$queryStats->execute(array(":geojson"=>json_encode($_REQUEST["geom"]["geometry"])));
+		$queryStats->execute(array(":geojson"=>$geomJson));
 	}
 	else
 	{

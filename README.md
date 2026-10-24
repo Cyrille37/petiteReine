@@ -36,25 +36,23 @@ Python import: [uv](https://docs.astral.sh/uv/) (the dependencies in `pyproject.
 
 ### Import
 
-The Python import reads everything locally from `data/france.gol` via [GeoDesk](https://docs.geodesk.com/) (no Overpass call). Run the zones first, then the parkings:
+One script does the whole update:
 
-- `uv run import/import_zones.py`
+```
+./import/update.sh
+```
+
+It downloads the latest Indre-et-Loire OSM extract, builds and verifies the GeoDesk `.gol` file (`import/indre_et_loire-latest.gol`), then runs the two Python imports — zones first, then parkings. All data is read locally from the `.gol` via [GeoDesk](https://docs.geodesk.com/) (no Overpass call):
+
+- `import/import_zones.py`
   - reads the list of `ref:INSEE` codes from `conf.ini` and imports their `[admin_level=8][boundary=administrative]` boundaries into `pv_zones`
   - GUI will have a "Communes" control
-- `uv run import/import_parkings.py`
+- `import/import_parkings.py`
   - imports all `amenity=bicycle_parking` nodes and polygons within the configured zones into `pv_parkings` (assigns `zone_id`, removes `informal` parkings)
   - regenerates the isochrone areas (`pv_parking_dist_zones`) for each distance threshold in `[parkings] distance_levels`, using the `[parkings] dist_proj` projection
   - exports the parkings to `export/parkings.json` and logs a row in `pv_import_trace`
 
-Both scripts accept a `--dry-run` flag to query the `.gol` file without touching the database.
-
-**The `.gol` file** is a local snapshot of OpenStreetMap. Build it once from an OSM PBF (a few GB):
-
-```
-gol build france data/france-latest.osm.pbf   # produces data/france.gol
-```
-
-Rebuilding it (e.g. with a newer PBF) is how you refresh the imported data.
+Both scripts also accept a `--dry-run` flag to query the `.gol` file without touching the database.
 
 **Both scripts are idempotent**: each run replaces the whole table contents (`DELETE` + re-`INSERT` in a single transaction), so re-running them (e.g. from a cron job) is safe and always converges to the latest `.gol` data.
 
@@ -65,7 +63,7 @@ Legacy Overpass imports, kept for reference: `php import/import.php` (parkings, 
 Copy `conf.ini.example` to `conf.ini` (it is gitignored) and fill in:
 
 - `[database]`: the database credentials
-- `[data]`: the path to the `france.gol` file
+- `[data]`: the path to the `.gol` file
 - `[zones] insee`: the list of `ref:INSEE` codes to import (used by both scripts)
 - `[parkings]`: the projection (`dist_proj`) and the isochrone distance thresholds (`distance_levels`) for the parking import
 

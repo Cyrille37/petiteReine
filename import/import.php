@@ -283,7 +283,7 @@ if($result)
 	// STEP 4 : SAVING A TRACE
 	// Insert a new row in the trace table
 	$traceAttr = array(":status"=>'false',
-		":startdt"=>date('Y-m-d h:i:s'),
+		":startdt"=>date('Y-m-d H:i:s'),
 		":duration"=>(time()-$startTime),
 		":area"=>OSM_ZONE,
 		":number_parking"=>0,":total_capacity"=>0,":number_nocapacity"=>0,":number_notype"=>0,":number_problem"=>0);
