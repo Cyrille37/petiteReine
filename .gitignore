@@ -1,6 +1,13 @@
 
 conf.php
+conf.ini
 /debug*
+
+# Python / uv
+.venv/
+uv.lock
+__pycache__/
+*.pyc
 
 # =========================
 # Operating System Files

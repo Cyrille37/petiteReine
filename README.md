@@ -33,16 +33,37 @@ Php import:
 - php-pgsql
 - php-dom
 
+Python import: [uv](https://docs.astral.sh/uv/) (the dependencies in `pyproject.toml` are resolved automatically).
+
 ### Import
 
-In conf.php set OSM_ZONE with a relation Id to import all ways and nodes with `amenity=bicycle_parking` inside the relation.
+The Python import reads everything locally from `data/france.gol` via [GeoDesk](https://docs.geodesk.com/) (no Overpass call). Run the zones first, then the parkings:
 
-When conf has `MODE_ZONE_FILTER=true` :
-- php import/import_zones.php
-  - create zones for `[admin_level=8][boundary=administrative]`
+- `uv run import/import_zones.py`
+  - reads the list of `ref:INSEE` codes from `conf.ini` and imports their `[admin_level=8][boundary=administrative]` boundaries into `pv_zones`
   - GUI will have a "Communes" control
-- php import/import.php
+- `uv run import/import_parkings.py`
+  - imports all `amenity=bicycle_parking` nodes and polygons within the configured zones into `pv_parkings` (assigns `zone_id`, removes `informal` parkings)
+  - regenerates the isochrone areas (`pv_parking_dist_zones`) for each distance threshold in `[parkings] distance_levels`, using the `[parkings] dist_proj` projection
+  - exports the parkings to `export/parkings.json` and logs a row in `pv_import_trace`
 
-When `MODE_ZONE_FILTER=false`:
-- php import/import.php
+Both scripts accept a `--dry-run` flag to query the `.gol` file without touching the database.
 
+Legacy Overpass imports, kept for reference: `php import/import.php` (parkings, area from `OSM_ZONE` or bbox in `conf.php`) and `php import/import_zones.php` (single zone).
+
+### Configuring the Python import
+
+Copy `conf.ini.example` to `conf.ini` (it is gitignored) and fill in:
+
+- `[database]`: the database credentials
+- `[data]`: the path to the `france.gol` file
+- `[zones] insee`: the list of `ref:INSEE` codes to import (used by both scripts)
+- `[parkings]`: the projection (`dist_proj`) and the isochrone distance thresholds (`distance_levels`) for the parking import
+
+### Docker
+
+```
+docker compse up -d
+
+docker exec -i petitereine-sql-1 psql -U postgres -d petitereine < res/DB.sql
+```

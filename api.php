@@ -51,7 +51,9 @@ function calculateStats($PDO,$LABELS,$filterClause,$geom = "")
 	if($geom != "")
 	{
 		// if a geometry is provided, the area within the polygon
-		$sqlArea = "select st_area(st_transform(st_geomfromgeojson(:geojson),:proj)) as area";
+		// the ::int cast is required: PDO pgsql sends parameters as text and
+		// ST_Transform would otherwise resolve to the PROJ-string overload
+		$sqlArea = "select st_area(st_transform(st_geomfromgeojson(:geojson),:proj::int)) as area";
 		$queryArea = $PDO->prepare($sqlArea);
 		$queryArea->execute(array(":proj"=>DIST_PROJ,":geojson"=>json_encode($_REQUEST["geom"]["geometry"])));
 		if($rs = $queryArea->fetch())
@@ -207,7 +209,9 @@ if(isset($_REQUEST["get"]))
 		$result = array("distance"=>0);
 
 		$geomString = "POINT(".$_REQUEST["lon"]." ".$_REQUEST["lat"].")";
-		$sqlDistance = "select min(st_distance(st_transform(the_geom,:proj), st_transform(st_geomfromtext(:point,4326),:proj2))) as distance from pv_parkings where access <> 'private'";
+		// the ::int casts are required: PDO pgsql sends parameters as text and
+		// ST_Transform would otherwise resolve to the PROJ-string overload
+		$sqlDistance = "select min(st_distance(st_transform(the_geom,:proj::int), st_transform(st_geomfromtext(:point,4326),:proj2::int))) as distance from pv_parkings where access <> 'private'";
 		$queryDistance = $PDO->prepare($sqlDistance);
 		$queryDistance->execute(array(":proj"=>DIST_PROJ,":proj2"=>DIST_PROJ,":point"=>$geomString));
 		if($rs = $queryDistance->fetch())
@@ -225,8 +229,8 @@ if(isset($_REQUEST["get"]))
 	else if($_REQUEST["get"] == "stats")
 	{
 		$result = array();
-		$result["content"] = '<div class="private">'.calculateStats($PDO,$LABELS,"",$_REQUEST["geom"]).'</div>';
-		$result["content"] .= '<div class="noPrivate">'.calculateStats($PDO,$LABELS," and access <> 'private' ",$_REQUEST["geom"]).'</div>';
+		$result["content"] = '<div class="private">'.calculateStats($PDO,$LABELS,"",$_REQUEST["geom"] ?? "").'</div>';
+		$result["content"] .= '<div class="noPrivate">'.calculateStats($PDO,$LABELS," and access <> 'private' ",$_REQUEST["geom"] ?? "").'</div>';
 		
 		header('Content-type: application/json');
 		echo json_encode($result, JSON_NUMERIC_CHECK);

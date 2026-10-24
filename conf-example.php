@@ -2,6 +2,8 @@
 require_once __DIR__.'/lib/mobileDetect/Mobile_Detect.php';
 require_once __DIR__.'/lib/functions.php';
 
+global $LABELS ;
+
 // In this file, we are going to configure the app step by step
 
 /**
@@ -99,6 +101,13 @@ try {
 }
 // The initial map viewport is calculated according to the parkings that exist in the zones that are visible by default
 $queryViewPort = $PDO->query("select min(st_x(the_geom)) as xmin,max(st_x(the_geom)) as xmax,min(st_y(the_geom)) as ymin,max(st_y(the_geom)) as ymax from pv_parkings where zone_id in (select zone_id from pv_zones where visible_default = 1 and active = 1)");
+
+if ( ! $queryViewPort )
+{
+	//$err = $PDO->errorInfo();
+	die("Database tables are missing (pv_parkings / pv_zones). Load the schema DB.sql\n");
+}
+
 $viewPort = $queryViewPort->fetch();
 
 //

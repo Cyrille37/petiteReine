@@ -74,7 +74,9 @@ if($result)
 	// The nodes are iterated first
 	$resultsList = $dom->getElementsByTagName('node');
 
+	$isAParking = false;
 	$pointCoord = array();
+
 	for($numNode = 0; $numNode < $resultsList->length; $numNode++)
 	{
 		$place = $resultsList->item($numNode);
@@ -178,7 +180,7 @@ if($result)
 		if($isAParking)
 		{
 			$insertWayParking = $PDO->prepare("INSERT INTO pv_parkings (obj_id,capacity,covered,parking_type,access,the_geom,timestamp,operator) VALUES (:obj_id,:capacity,:covered,:bicycle_parking,:access,st_geomfromtext(:geom,4326),:timestamp,:operator)");
-			if( ! $insertNodeParking->execute($parkingAttr)){echo print_r($PDO->errorInfo())."<br>";};
+			if( ! $insertWayParking->execute($parkingAttr)){echo print_r($PDO->errorInfo())."<br>";};
 			$dataExists = true;
 		}
 	}
@@ -235,12 +237,14 @@ if($result)
 			// Polygons are generated given the parkings, a distance threshold, and the local boundaires (pv_zones.geom)
 			$sqlDistZones = "insert into pv_parking_dist_zones
 				select zone_id,:dist,".$areaSelector."  from (
-				select zone_id,ST_Multi(st_intersection((Z.geom),(select st_transform(st_union(st_buffer(st_transform(the_geom,:proj),:dist2)),4326) from pv_parkings where access <> 'private'))) as the_geom
+				select zone_id,ST_Multi(st_intersection((Z.geom),(select st_transform(st_union(st_buffer(st_transform(the_geom,:proj::int),:dist2)),4326) from pv_parkings where access <> 'private'))) as the_geom
 				from pv_zones Z	)
 				sr where st_geometrytype(the_geom) = 'ST_MultiPolygon'";
 		
 			$queryDistZones = $PDO->prepare($sqlDistZones);
-			// TODO: it works with php7.4 but failed with php8.3 😩. Should be a pgsql client driver ... https://externals.io/message/113521
+			// the ::int cast in the SQL is required with php8.3: PDO pgsql sends
+			// parameters as text and ST_Transform would otherwise resolve to the
+			// PROJ-string overload (https://externals.io/message/113521)
 			$queryDistZones->bindValue(':proj', (int)DIST_PROJ, PDO::PARAM_INT);
 			$queryDistZones->bindValue(':dist', $distElt['dist']);
 			$queryDistZones->bindValue(':dist2', $distElt['dist']);

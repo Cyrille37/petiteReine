@@ -17,6 +17,17 @@
 
 ### Import Methods
 
+The recommended import is the Python one: it reads all data locally from `data/france.gol` via GeoDesk (no Overpass call). Run the zones first, then the parkings:
+
+```bash
+uv run import/import_zones.py     # pv_zones, from [zones] insee in conf.ini
+uv run import/import_parkings.py  # pv_parkings + isochrones + export/parkings.json
+```
+
+Both accept `--dry-run` to preview the query results without touching the database.
+
+Legacy Overpass-based import (`php import/import.php`), kept for reference:
+
 **Relation-based Import:**
 ```bash
 # Set your OSM relation ID in conf.php
@@ -49,10 +60,21 @@ define('MODE_ZONE_FILTER', true);
 ```
 
 **Import Administrative Zones:**
+
+The zone list is defined by `ref:INSEE` codes in `conf.ini` (copy from `conf.ini.example`). Boundaries are read locally from `data/france.gol` via GeoDesk.
 ```bash
-php import/import_zones.php
-php import/import.php
+uv run import/import_zones.py     # add --dry-run to preview without writing
+uv run import/import_parkings.py  # parkings must be imported after the zones
 ```
+
+**Parking Import:**
+
+`import_parkings.py` imports all `amenity=bicycle_parking` nodes and polygons strictly within the configured zones. It also:
+- assigns each parking its `zone_id` (by geometry containment) and drops `informal` parkings
+- regenerates the isochrone areas in `pv_parking_dist_zones` for each threshold in `[parkings] distance_levels`
+- exports `export/parkings.json` and logs a row in `pv_import_trace`
+
+It refuses to run if `pv_zones` does not contain all the configured zones.
 
 **Zone Configuration:**
 - Zones are stored in `pv_zones` table
@@ -72,7 +94,7 @@ php import/import.php
 crontab -e
 
 # Add daily update at 3 AM
-0 3 * * * /usr/bin/php /path/to/petitereine/import/import.php >> /var/log/petitereine-import.log 2>&1
+0 3 * * * cd /path/to/petitereine && uv run import/import_zones.py && uv run import/import_parkings.py >> /var/log/petitereine-import.log 2>&1
 ```
 
 ## Configuration Options
@@ -90,8 +112,16 @@ $CLIENT_CONF = array(
 ```
 
 ### Distance Calculation
+
+Python import (`conf.ini`):
+```ini
+[parkings]
+dist_proj = 27572              # projection where 1 unit ≈ 1 meter
+distance_levels = 100,200,400  # isochrone thresholds in meters, ascending
+```
+
+Legacy PHP import (`conf.php`):
 ```php
-// In conf.php
 define('DIST_PROJ',27572);
 $DISTANCE_LEVELS = array(
     array('dist' => 100, 'colour' => 'green'),    // 0-100m: green

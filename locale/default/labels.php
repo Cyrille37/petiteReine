@@ -1,6 +1,6 @@
 <?php 
 
-$LABELS = array(
+$LABELS = [
 	'pageTitle'=>'Bicycle parkings',
 	// left panel labels
 	'panel.stats'=>'Statistics',
@@ -66,6 +66,6 @@ $LABELS = array(
 		"other"=>"%s spaces in other parking types (%s)",
 		"unknown"=>"%s spaces in parkings of unknown type (%s)"
 	)
-);
+];
 
 ?>

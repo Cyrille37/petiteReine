@@ -1,0 +1,29 @@
+# PetiteReine Python import configuration
+# Copy this file to `conf.ini` (same directory) and fill in real values.
+# `conf.ini` is gitignored; this template is the tracked reference.
+
+[database]
+host = localhost
+port = 5432
+dbname = petitereine
+user = postgres
+password = secret
+
+[data]
+# Path to the GeoDesk .gol file, relative to this file (or absolute).
+gol = data/france.gol
+
+[zones]
+# Commune codes (ref:INSEE) to import as pv_zones.
+# Multi-line or comma-separated, order does not matter.
+insee =
+    22016
+    50109
+    14654
+
+[parkings]
+# EPSG code of the projection used for distance (isochrone) calculations.
+# One unit is roughly one meter (27572 = Lambert CC42, central France).
+dist_proj = 27572
+# Isochrone distance thresholds in meters, ascending.
+distance_levels = 100,200,400

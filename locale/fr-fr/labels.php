@@ -1,6 +1,6 @@
 <?php 
 
-$LABELS = array(
+$LABELS = [
 	'pageTitle'=>'Parkings vélo',
 	// left panel labels
 	'panel.stats'=>'Statistiques',
@@ -68,6 +68,6 @@ $LABELS = array(
 		"other"=>"%s places sur autres types de parking (%s)",
 		"unknown"=>"%s places sur parkings de type inconnu (%s)"
 	)
-);
+];
 
 ?>
