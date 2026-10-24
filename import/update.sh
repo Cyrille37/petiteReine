@@ -23,7 +23,7 @@ curl -fL --retry 3 -o "$tmp" "$PBF_URL"
 mv -- "$tmp" "$PBF"
 
 echo "Building $GOL ..."
-gol build "$GOL" "$PBF"
+gol build --yes "$GOL" "$PBF"
 
 echo "Checking $GOL ..."
 gol check "$GOL"
