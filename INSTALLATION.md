@@ -106,19 +106,6 @@ server {
 
 ## First or recurrent Data Import
 
-<<<<<<< HEAD
-The whole update — download, build, imports — is done by one script:
-
-```bash
-./import/update.sh
-```
-
-It downloads the latest Indre-et-Loire OSM extract, builds and verifies the GeoDesk `.gol` file (`import/indre_et_loire-latest.gol`, see `[data] gol` in `conf.ini`), then runs the two idempotent Python imports (zones first, then parkings). Each import replaces the table contents, so re-running — e.g. from a cron job — is safe. The scripts also accept `--dry-run` when run directly. Example of a daily update at 3 AM:
-
-```bash
-# crontab -e
-0 3 * * * /path/to/petitereine/import/update.sh >> /var/log/petitereine-import.log 2>&1
-=======
 The import is done by the Python scripts, which read everything locally from `data/france.gol` via GeoDesk (no Overpass call). Run the zones first, then the parkings:
 
 ```bash
@@ -137,7 +124,6 @@ Both accept `--dry-run` to preview without touching the database, and are idempo
 
 ```bash
 gol build france data/france-latest.osm.pbf   # produces data/france.gol
->>>>>>> 52e24af5245073e7d3cea35ec7ee6934695c7236
 ```
 
 Legacy PHP imports, kept for reference: `php import/import.php` (parkings, area from `OSM_ZONE` or bbox in `conf.php`) and `php import/import_zones.php` (single zone).
