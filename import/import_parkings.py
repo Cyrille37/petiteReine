@@ -265,6 +265,11 @@ def main():
         action="store_true",
         help="query parkings from the .gol file, but do not touch the database",
     )
+    parser.add_argument(
+        "--silent",
+        action="store_true",
+        help="suppress informational output (cron); only print on writes",
+    )
     args = parser.parse_args()
 
     start = time.time()
@@ -274,25 +279,30 @@ def main():
     if not gol_path.is_file():
         sys.exit(f"GeoDesk file not found: {gol_path}")
 
-    print(f"Loading {gol_path} ...")
+    if not args.silent:
+        print(f"Loading {gol_path} ...")
     france = Features(str(gol_path))
 
     # One query per INSEE code: the multi-value form [ref:INSEE=a,b] is
     # unreliable across geodesk versions (2.2.5 matches nothing), so each
     # code is queried individually to stay version-independent.
-    print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
+    if not args.silent:
+        print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
     zones = []
     for code in insee:
         zones.extend(france(ZONE_QUERY.format(code=code)))
     if not zones:
         sys.exit("No zones found for the configured ref:INSEE codes.")
-    for zone in zones:
-        print(f"  {zone['ref:INSEE']}  {zone['name']}  (R{zone.id})")
+    if not args.silent:
+        for zone in zones:
+            print(f"  {zone['ref:INSEE']}  {zone['name']}  (R{zone.id})")
 
-    print(f"Parkings: {PARKING_QUERY} within {len(zones)} zone(s)")
+    if not args.silent:
+        print(f"Parkings: {PARKING_QUERY} within {len(zones)} zone(s)")
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     parkings = collect_parkings(france, zones, timestamp)
-    print(f"Found {len(parkings)} parking(s).")
+    if not args.silent:
+        print(f"Found {len(parkings)} parking(s).")
 
     if args.dry_run:
         for p in parkings[:20]:
@@ -321,16 +331,19 @@ def main():
             import_parkings(conn, parkings)
             build_isochrones(conn, dist_proj, levels)
             exported = export_geojson(conn)
-            print(f"Inserted {len(parkings)} parking(s), "
-                  f"regenerated isochrones ({', '.join(map(str, levels))} m), "
-                  f"exported {exported} feature(s) to export/parkings.json.")
+            if not args.silent:
+                print(f"Inserted {len(parkings)} parking(s), "
+                      f"regenerated isochrones ({', '.join(map(str, levels))} m), "
+                      f"exported {exported} feature(s) to export/parkings.json.")
             status = True
         else:
-            print("No parkings found: database left unchanged.")
+            if not args.silent:
+                print("No parkings found: database left unchanged.")
 
         write_trace(conn, status, start, len(zones))
 
-    print("Done.")
+    if not args.silent:
+        print("Done.")
 
 
 if __name__ == "__main__":

@@ -83,6 +83,11 @@ def main():
         action="store_true",
         help="query and build geometries, but do not touch the database",
     )
+    parser.add_argument(
+        "--silent",
+        action="store_true",
+        help="suppress informational output (cron); only print warnings",
+    )
     args = parser.parse_args()
 
     db, gol_path, insee = load_config()
@@ -91,18 +96,22 @@ def main():
     if not gol_path.is_file():
         sys.exit(f"GeoDesk file not found: {gol_path}")
 
-    print(f"Loading {gol_path} ...")
+    if not args.silent:
+        print(f"Loading {gol_path} ...")
     france = Features(str(gol_path))
 
-    print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
+    if not args.silent:
+        print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
     zones, missing = collect_zones(france, insee)
-    print(f"Found {len(zones)} zone(s).")
+    if not args.silent:
+        print(f"Found {len(zones)} zone(s).")
     for code in missing:
         print(f"  WARNING: no area for INSEE {code}")
 
-    for code, (label, osm_id, geom) in sorted(zones.items()):
-        parts = len(geom.geoms) if geom.geom_type == "MultiPolygon" else 1
-        print(f"  {code}  {label}  (R{osm_id})  {geom.geom_type}  {parts} part(s)")
+    if not args.silent:
+        for code, (label, osm_id, geom) in sorted(zones.items()):
+            parts = len(geom.geoms) if geom.geom_type == "MultiPolygon" else 1
+            print(f"  {code}  {label}  (R{osm_id})  {geom.geom_type}  {parts} part(s)")
 
     if args.dry_run:
         print("Dry run: no database changes made.")
@@ -119,7 +128,8 @@ def main():
                 for code, (label, osm_id, geom) in sorted(zones.items()):
                     cur.execute(sql, (code, label, osm_id, geom.wkt))
 
-    print(f"Inserted {len(zones)} zone(s) into pv_zones.")
+    if not args.silent:
+        print(f"Inserted {len(zones)} zone(s) into pv_zones.")
 
 
 if __name__ == "__main__":
