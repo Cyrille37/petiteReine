@@ -4,6 +4,6 @@ version = "0.1.0"
 description = "PetiteReine data import tools (GeoDesk)"
 requires-python = ">=3.10"
 dependencies = [
-    "geodesk>=2.3.8",
+    "geodesk>=2.2.5",
     "psycopg[binary]>=3.1",
 ]
