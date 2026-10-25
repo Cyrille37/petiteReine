@@ -40,6 +40,7 @@ def load_config():
         "dbname": cfg.get("database", "dbname"),
         "user": cfg.get("database", "user"),
         "password": cfg.get("database", "password", fallback=""),
+        "client_encoding": "UTF8",
     }
 
     gol_path = Path(cfg.get("data", "gol"))
