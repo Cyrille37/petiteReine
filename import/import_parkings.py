@@ -81,8 +81,7 @@ def load_config():
     return db, gol_path, insee, dist_proj, levels
 
 
-def build_query(insee):
-    return f"a[admin_level=8][boundary=administrative][ref:INSEE={','.join(insee)}]"
+ZONE_QUERY = "a[admin_level=8][boundary=administrative][ref:INSEE={code}]"
 
 
 def parse_capacity(value):
@@ -277,9 +276,13 @@ def main():
     print(f"Loading {gol_path} ...")
     france = Features(str(gol_path))
 
-    zone_query = build_query(insee)
-    print(f"Zones: {zone_query}")
-    zones = list(france(zone_query))
+    # One query per INSEE code: the multi-value form [ref:INSEE=a,b] is
+    # unreliable across geodesk versions (2.2.5 matches nothing), so each
+    # code is queried individually to stay version-independent.
+    print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
+    zones = []
+    for code in insee:
+        zones.extend(france(ZONE_QUERY.format(code=code)))
     if not zones:
         sys.exit("No zones found for the configured ref:INSEE codes.")
     for zone in zones:
