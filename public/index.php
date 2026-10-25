@@ -54,7 +54,11 @@ var CLIENT_CONF = <?php echo json_encode($CLIENT_CONF, JSON_NUMERIC_CHECK);?>;
 		<?php
 		$queryImport = $PDO->query("select startdt from pv_import_trace where status = true order by trace_id desc limit 1");
 		if($rsImport = $queryImport->fetch())
-			echo "<p>".sprintf($LABELS["stats.importDate"],date('d/m/Y',strtotime($rsImport["startdt"])))."</p>";
+		{
+			$tsImport = strtotime($rsImport["startdt"]);
+			$timeEl = '<time id="importDate" datetime="'.gmdate("Y-m-d\TH:i:s\Z",$tsImport).'">'.date('d/m/Y H:i',$tsImport).'</time>';
+			echo '<p>'.sprintf($LABELS["stats.importDate"],$timeEl).'</p>';
+		}
 		?>
 		<div id="zone_analysis">
 			<h4><?php echo $LABELS["panel.stats.byZone"];?></h4>

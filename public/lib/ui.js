@@ -317,6 +317,7 @@ function mapInit(){
 	}
 
 	layerLoader.updateZones();
+	formatImportDate();
 }
 
 /**
@@ -468,6 +469,20 @@ var popupManager = {
 function zoneListToggleAll( onOff )
 {
 	$('#zoneList input[type="checkbox"]').prop("checked", onOff);
+}
+
+function formatImportDate(){
+	var el = document.getElementById("importDate");
+	if(el)
+	{
+		var d = new Date(el.getAttribute("datetime"));
+		if(!isNaN(d))
+		{
+			var datePart = d.toLocaleDateString(undefined,{year:"numeric",month:"2-digit",day:"2-digit"});
+			var timePart = d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+			el.textContent = datePart+" "+timePart;
+		}
+	}
 }
 
 window.onload = mapInit;
