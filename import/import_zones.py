@@ -52,23 +52,24 @@ def load_config():
     return db, gol_path, insee
 
 
-def build_query(insee):
-    return f"a[admin_level=8][boundary=administrative][ref:INSEE={','.join(insee)}]"
+ZONE_QUERY = "a[admin_level=8][boundary=administrative][ref:INSEE={code}]"
 
 
 def collect_zones(france, insee):
-    """Return ({code: (label, osm_id, wgs84_geom)}, [missing codes])."""
-    features = france(build_query(insee))
+    """Return ({code: (label, osm_id, wgs84_geom)}, [missing codes]).
 
-    by_code = {}
-    for f in features:
-        by_code.setdefault(str(f["ref:INSEE"]), []).append(f)
-
+    One query per INSEE code: the multi-value form [ref:INSEE=a,b] is
+    unreliable across geodesk versions (2.2.5 matches nothing), so each
+    code is queried individually to stay version-independent.
+    """
     zones = {}
-    for code, feats in by_code.items():
+    for code in insee:
+        feats = france(ZONE_QUERY.format(code=code))
+        if feats.count == 0:
+            continue
+        first = next(iter(feats))
         geom = unary_union([geodesk.from_mercator(f.shape) for f in feats])
-        label = feats[0]["name"] or code
-        zones[code] = (label, int(feats[0].id), geom)
+        zones[code] = (first["name"] or code, int(first.id), geom)
 
     missing = [c for c in insee if c not in zones]
     return zones, missing
@@ -92,7 +93,7 @@ def main():
     print(f"Loading {gol_path} ...")
     france = Features(str(gol_path))
 
-    print(f"Query: {build_query(insee)}")
+    print(f"Querying {len(insee)} INSEE code(s): {', '.join(insee)}")
     zones, missing = collect_zones(france, insee)
     print(f"Found {len(zones)} zone(s).")
     for code in missing:

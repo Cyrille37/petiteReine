@@ -11,7 +11,9 @@ Features :
 * Highlighting missing or incorrect data
 * Localisation support (English and French are available)
 
-Original version 2014 by https://github.com/edewaele/
+- Original version 2014 by https://github.com/edewaele/
+- Fork for maintenance & evolution https://github.com/Cyrille37/petiteReine
+  - v2: replace Overpass by Geodesk
 
 ## Documentation
 
@@ -24,13 +26,12 @@ Project versions:
 
 ## Install
 
-Tested with PHP 8.3 (`pdo_pgsql`) and PostgreSQL with PostGIS.
+Tested with PHP 8.3 (`pdo_pgsql`) and PostgreSQL 13 with PostGIS.
 
 ### Requirements
 
 Php import:
 - php-pgsql
-- php-dom
 
 Python import: [uv](https://docs.astral.sh/uv/) (the dependencies in `pyproject.toml` are resolved automatically).
 
