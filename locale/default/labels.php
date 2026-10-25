@@ -57,6 +57,7 @@ $LABELS = [
 	'map.bad.edit'=>"Edit with JOSM",
 	// statistics tool
 	'stats.noData'=> "No data",
+	'stats.importDate'=>"Data from %s",
 	'stats.area'=>"Area : %s km²<br>",
 	'stats.total'=>"%s spaces (%s parkings) including :",
 	'stats.byType'=>array(
