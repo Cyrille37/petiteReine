@@ -6,7 +6,8 @@ conf.ini
 
 # Python / uv
 .venv/
-uv.lock
+# 📢 don't ignore uv.lock, geodesk & shapely versions are very sensibles !!
+#uv.lock
 __pycache__/
 *.pyc
 

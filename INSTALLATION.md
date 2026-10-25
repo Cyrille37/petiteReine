@@ -12,11 +12,6 @@
 - **Web Server** (Apache, Nginx, or built-in PHP server)
 - **Optional**: Docker and Docker Compose for containerized setup
 
-### System Requirements
-- Minimum 2GB RAM (4GB recommended for large datasets)
-- 1GB+ disk space for database
-- Internet access for Overpass API queries
-
 ## Installation
 
 1. **Docker Setup for Postgis**

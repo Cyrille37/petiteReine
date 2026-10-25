@@ -2,8 +2,9 @@
 name = "petitereine-import"
 version = "0.1.0"
 description = "PetiteReine data import tools (GeoDesk)"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "geodesk>=2.2.5",
+    "geodesk>=2.3,<3",
     "psycopg[binary]>=3.1",
+    "shapely>=2.2,<2.3",
 ]

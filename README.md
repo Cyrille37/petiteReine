@@ -3,20 +3,20 @@ PetiteReine (french for bicycle) is a visualisation, data analysis and quality a
 Demo online at https://petitereine.openstreetmap.fr/. Thanks to the OpenStreetMap France association for providing the technical facilities.
 
 Features : 
-* Data import from OpenStreetMap (local GeoDesk `.gol` file, no Overpass call)
-* Easy configuration for a small area (city, county)
+* Data import from OpenStreetMap (local GeoDesk `.gol` file, no more Overpass call)
+* Configuration for French areas on their `ref:INSEE` osm tag (city, county)
 * Displaying parkings with several useful attributes (type, capacity, covered or not, access rules)
 * Statistics based on user - drawn areas
 * Filtering by administrative entities
 * Highlighting missing or incorrect data
 * Localisation support (English and French are available)
 
+Original version 2014 by https://github.com/edewaele/
+
 ## Documentation
 
 For detailed setup instructions, please refer to:
 - [INSTALLATION.md](INSTALLATION.md) - Complete setup guide
-
-Additional information is available on the wiki: https://github.com/edewaele/petiteReine/wiki
 
 Project versions:
 * Current: https://github.com/Cyrille37/petiteReine
